@@ -1,0 +1,24 @@
+library(sqldf)
+tbl <- read.csv.sql("household_power_consumption.txt", sql = "select * from file WHERE Date = '1/2/2007' OR Date = '2/2/2007'", header = TRUE, sep = ";")
+closeAllConnections()
+tbl$date_time <- strptime(paste(tbl$Date, tbl$Time),format ="%d/%m/%Y%H:%M:%S")
+
+png(file = "plot4.png")
+
+par(mfcol = c(2,2))
+
+plot(tbl$date_time,tbl$Global_active_power, type = "l", ylab = "Global active power (kilowatts)", xlab = "")
+
+plot(tbl$date_time,tbl$Sub_metering_1, type = "n", ylab = "Energy sub metering", xlab = "")
+points(tbl$date_time,tbl$Sub_metering_1, type = "l")
+points(tbl$date_time,tbl$Sub_metering_2, type = "l", col = "red")
+points(tbl$date_time,tbl$Sub_metering_3, type = "l", col = "blue")
+legend("topright", legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), 
+       col = c("black", "red", "blue"), lwd = 2, y.intersp = 0.99, cex = .7, adj = .1)
+
+plot(tbl$date_time,tbl$Voltage, type = "l", ylab = "Voltage", xlab = "datetime")
+
+plot(tbl$date_time,tbl$Global_reactive_power, type = "l", ylab = "Global_reactive_power", xlab = "datetime")
+
+dev.off()
+
